@@ -44,6 +44,7 @@ client.connect(PORT, 'localhost', callBack);
 process.stdin.on('data', data => {
     let dataWrited=`${data.toString()}`
     dataWrited=dataWrited.substring(0,dataWrited.length-1);
+    console.log('dataWrited:'+dataWrited)
     let json={};
     json.from=USER;
     json.to='all';
@@ -52,7 +53,11 @@ process.stdin.on('data', data => {
     if(m0.length>1 && m0[0].indexOf('to:')===0){
         let m1=m0[0].split('to:');
         json.to=m1[1];
-        json.data=m0[1];
+        let strDataForTo=''
+        for(var i=1;i<m0.length;i++){
+          strDataForTo+=m0[i]+' '
+        }
+        json.data=strDataForTo;
     }
     let ds=JSON.stringify(json, null, 2)
     console.log('Enviando: '+ds)
