@@ -1,15 +1,35 @@
 const {Socket} = require('net')
 
-const USER = process.argv[2] || 'anonimo';
-const PORT = process.env.PORT || 3111;
+var USER = process.argv[2] || 'anonimo';
+var TO = process.argv[3] || '';
+var DATA = process.argv[4] || '';
+var DEBUG = false;
+
+var HOST = process.env.HOST || '192.168.1.42';//'localhost';
+var PORT = process.env.PORT || 3111;
+
+for(var i=0;i<process.argv.length;i++){
+    let m0
+    let arg=process.argv[i]
+    if(arg.indexOf('debug')>=0)DEBUG=true
+    if(arg.indexOf('port=')>=0){
+        m0=arg.split('port=')
+        PORT=parseInt(m0[1])
+    }
+    if(arg.indexOf('host=')>=0){
+        m0=arg.split('host=')
+        HOST=m0[1]
+    }
+}
+
 const client= new Socket()
 
 var callBack = function (){
-    console.log('Conectado a localhost:'+PORT+' como '+USER)
+    if(DEBUG)console.log('Conectado a :'+HOST+':'+PORT+' como '+USER)
     let json={};
     client.on('data', message => {
       if (message === 'disconnect') {
-        console.log('disconnecting from localhost')
+        if(DEBUG)console.log('disconnecting from '+HOST)
         client.end()
       } else {
         //console.log(`Message from the Server: ${message}`)
@@ -19,16 +39,18 @@ var callBack = function (){
         }catch(e){
           return console.error(e);
         }
-        console.log('\n------------->')
+        //console.log('\n------------->')
         if(json.to === USER){
-          console.log('Datos para mi: '+json.to)
+          //console.log('Datos para mi: '+json.to)
+          console.log(JSON.stringify(json))
         }
         if(json.to === 'all'){
-          console.log('Datos para todos: '+json.to)
+          //console.log('Datos para todos: '+json.to)
         }
-        console.log('De:'+json.from)
+        //console.log(JSON.stringify(json))
+        /*console.log('De:'+json.from)
         console.log('Data:'+json.data)
-        console.log('<-------------\n')
+        console.log('<-------------\n')*/
       }
     })
     json.from=USER;
@@ -39,12 +61,12 @@ var callBack = function (){
     json.data=msgConn
     client.write(JSON.stringify(json, null, 2))
 }
-client.connect(PORT, 'localhost', callBack);
+client.connect(PORT, HOST, callBack);
 
 process.stdin.on('data', data => {
     let dataWrited=`${data.toString()}`
     dataWrited=dataWrited.substring(0,dataWrited.length-1);
-    console.log('dataWrited:'+dataWrited)
+    //console.log('dataWrited:'+dataWrited)
     let json={};
     json.from=USER;
     json.to='all';
@@ -60,10 +82,27 @@ process.stdin.on('data', data => {
         json.data=strDataForTo;
     }
     let ds=JSON.stringify(json, null, 2)
-    console.log('Enviando: '+ds)
+    if(DEBUG)console.log('Enviando: '+ds)
     if(!client.remoteFamily){
-        console.log('Reconectando...')
-        client.connect(PORT, 'localhost', callBack);
+        if(DEBUG)console.log('Reconectando...')
+        client.connect(PORT, HOST, callBack);
     }
     client.write(ds);
 });
+
+if(DATA!=='' && TO!==''){
+    let dataWrited=DATA
+    dataWrited=dataWrited//.substring(0,dataWrited.length-1);
+    //console.log('dataWrited from argv:'+dataWrited)
+    let json={};
+    json.from=USER;
+    json.to=TO;
+    json.data=dataWrited//`${data.toString()}`;
+    let ds=JSON.stringify(json, null, 2)
+    if(DEBUG)console.log('Enviando: '+ds)
+//    if(!client.remoteFamily){
+//        console.log('Reconectando...')
+//        client.connect(PORT, 'localhost', callBack);
+//    }
+    client.write(ds);
+}

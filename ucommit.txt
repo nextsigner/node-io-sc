@@ -1,1 +1,1 @@
-Se envian los datos completos para to
+Se logra hacer funcionar todo en node-io-qml
