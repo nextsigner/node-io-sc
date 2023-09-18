@@ -5,7 +5,7 @@ var TO = process.argv[3] || '';
 var DATA = process.argv[4] || '';
 var DEBUG = false;
 
-var HOST = process.env.HOST || '192.168.1.42';//'localhost';
+var HOST = process.env.HOST || 'localhost';
 var PORT = process.env.PORT || 3111;
 
 for(var i=0;i<process.argv.length;i++){
@@ -37,7 +37,9 @@ var callBack = function (){
         try{
           json=JSON.parse(`${message}`);
         }catch(e){
-          return console.error(e);
+          let msgError='Error Message: ['+message+']'
+          msgError+='Error: '+e
+          return console.log('Error:::'+msgError)//console.error(e);
         }
         //console.log('\n------------->')
         if(json.to === USER){
@@ -53,13 +55,13 @@ var callBack = function (){
         console.log('<-------------\n')*/
       }
     })
-    json.from=USER;
+    /*json.from=USER;
     json.to='node-io-ss';
     let d = new Date(Date.now())
     let msgConn='conn'
     msgConn+='_'+d.getTime();
-    json.data=msgConn
-    client.write(JSON.stringify(json, null, 2))
+    json.data=msgConn*/
+    //client.write(JSON.stringify(json, null, 2))
 }
 client.connect(PORT, HOST, callBack);
 
