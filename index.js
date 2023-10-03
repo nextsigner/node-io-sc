@@ -5,8 +5,8 @@ var TO = process.argv[3] || '';
 var DATA = process.argv[4] || '';
 var DEBUG = false;
 
-var HOST = process.env.HOST || 'localhost';
-var PORT = process.env.PORT || 3111;
+var SERVERIP = process.env.NODEIOSIP || 'localhost';
+var PORT = process.env.NODEIOSPORT || 3111;
 
 for(var i=0;i<process.argv.length;i++){
     let m0
@@ -16,20 +16,20 @@ for(var i=0;i<process.argv.length;i++){
         m0=arg.split('port=')
         PORT=parseInt(m0[1])
     }
-    if(arg.indexOf('host=')>=0){
-        m0=arg.split('host=')
-        HOST=m0[1]
+    if(arg.indexOf('serverip=')>=0){
+        m0=arg.split('serverip=')
+        SERVERIP=m0[1]
     }
 }
 
 const client= new Socket()
 
 var callBack = function (){
-    if(DEBUG)console.log('Conectado a :'+HOST+':'+PORT+' como '+USER)
+    if(DEBUG)console.log('Conectado a :'+SERVERIP+':'+PORT+' como '+USER)
     let json={};
     client.on('data', message => {
       if (message === 'disconnect') {
-        if(DEBUG)console.log('disconnecting from '+HOST)
+        if(DEBUG)console.log('disconnecting from '+SERVERIP)
         client.end()
       } else {
         //console.log(`Message from the Server: ${message}`)
@@ -63,7 +63,7 @@ var callBack = function (){
     json.data=msgConn*/
     //client.write(JSON.stringify(json, null, 2))
 }
-client.connect(PORT, HOST, callBack);
+client.connect(PORT, SERVERIP, callBack);
 
 process.stdin.on('data', data => {
     let dataWrited=`${data.toString()}`
@@ -87,7 +87,7 @@ process.stdin.on('data', data => {
     if(DEBUG)console.log('Enviando: '+ds)
     if(!client.remoteFamily){
         if(DEBUG)console.log('Reconectando...')
-        client.connect(PORT, HOST, callBack);
+        client.connect(PORT, SERVERIP, callBack);
     }
     client.write(ds);
 });
