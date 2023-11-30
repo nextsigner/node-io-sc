@@ -1,1 +1,1 @@
-Se renombre variable HOST a SERVERIP
+Se edita console log de error

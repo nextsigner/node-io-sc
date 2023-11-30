@@ -5,7 +5,7 @@ var TO = process.argv[3] || '';
 var DATA = process.argv[4] || '';
 var DEBUG = false;
 
-var SERVERIP = process.env.NODEIOSIP || 'localhost';
+var SERVERIP = process.env.NODEIOSIP || '127.0.0.1';
 var PORT = process.env.NODEIOSPORT || 3111;
 
 for(var i=0;i<process.argv.length;i++){
@@ -39,7 +39,7 @@ var callBack = function (){
         }catch(e){
           let msgError='Error Message: ['+message+']'
           msgError+='Error: '+e
-          return console.log('Error:::'+msgError)//console.error(e);
+          return console.log('Error:::'+msgError+'\n\nmessage:['+message+']')//console.error(e);
         }
         //console.log('\n------------->')
         if(json.to === USER){
