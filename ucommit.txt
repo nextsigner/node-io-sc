@@ -1,1 +1,1 @@
-Se edita console log de error
+Se agrega var FROMCMD
