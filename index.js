@@ -8,6 +8,7 @@ var DEBUG = false;
 var SERVERIP = process.env.NODEIOSIP || '127.0.0.1';
 var PORT = process.env.NODEIOSPORT || 3111;
 var FROMCMD=false;
+var PERSISTENT=false
 for(var i=0;i<process.argv.length;i++){
     let m0
     let arg=process.argv[i]
@@ -20,6 +21,11 @@ for(var i=0;i<process.argv.length;i++){
         m0=arg.split('serverip=')
         SERVERIP=m0[1]
     }
+    if(arg.indexOf('persistent')>=0){
+        PERSISTENT=true;
+        console.log('{"from":"node-io-ss", "to":"'+USER+'", "data":"PERSISTENT: '+PERSISTENT+'"}')
+    }
+
 }
 
 const client= new Socket()
@@ -100,7 +106,7 @@ process.stdin.on('data', data => {
                  });
 
 if(DATA!=='' && TO!==''){
-    FROMCMD=true;
+    if(!PERSISTENT)FROMCMD=true;
     let dataWrited=DATA
     dataWrited=dataWrited//.substring(0,dataWrited.length-1);
     //console.log('dataWrited from argv:'+dataWrited)
@@ -115,5 +121,5 @@ if(DATA!=='' && TO!==''){
     //        client.connect(PORT, 'localhost', callBack);
     //    }
     client.write(ds);
-    client.end();
+    if(!PERSISTENT)client.end();
 }

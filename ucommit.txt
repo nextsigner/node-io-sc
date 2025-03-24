@@ -1,1 +1,1 @@
-Se agrega var FROMCMD
+Se reciben los parámetros de host y port
